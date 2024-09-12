@@ -76,13 +76,21 @@ def listen() -> None:
 
 
 def start() -> Generator[List[Any], None, None]:
-	print("11")
+    
+	if len(facefusion.globals.target_paths)<=0:
+		return
+    
 	# facefusion.globals.output_path = '/work/facefusion/output'
 	facefusion.globals.face_landmarker_score = 0
 	facefusion.globals.temp_frame_format = 'jpg'
-	facefusion.globals.output_video_preset = 'ultrafast'
+	facefusion.globals.output_image_quality = 100
+	facefusion.globals.output_video_quality = 100
+	facefusion.globals.output_video_encoder = 'h264_nvenc'
+	facefusion.globals.output_video_preset = 'veryslow'
+ 
 	benchmark_results = []
-	target_paths = get_mp4_files_glob(directory)
+ 
+	target_paths = facefusion.globals.target_paths
 
 	if target_paths:
 		pre_process()
@@ -109,11 +117,6 @@ def benchmark() -> List[Any]:
 	output_video_resolution = detect_video_resolution(facefusion.globals.target_path)
 	facefusion.globals.output_video_resolution = pack_resolution(output_video_resolution)
 	facefusion.globals.output_video_fps = detect_video_fps(facefusion.globals.target_path)
-
-	facefusion.globals.output_image_quality = 100
-	facefusion.globals.output_video_quality = 100
-	facefusion.globals.output_video_encoder = 'h264_nvenc'
-	facefusion.globals.output_video_preset = 'veryslow'
 
 	start_time = perf_counter()
 	conditional_process()
