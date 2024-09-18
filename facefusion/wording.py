@@ -130,6 +130,7 @@ WORDING : Dict[str, Any] =\
 		'donate_button': 'DONATE',
 		# benchmark
 		'benchmark_results_dataframe': 'BENCHMARK RESULTS',
+  		'batch_process_results': 'RESULTS',
 		# benchmark options
 		'benchmark_runs_checkbox_group': 'BENCHMARK RUNS',
 		'benchmark_cycles_slider': 'BENCHMARK CYCLES',

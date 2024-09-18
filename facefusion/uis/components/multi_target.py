@@ -1,9 +1,10 @@
+from time import sleep
 from typing import Tuple, Optional
 import gradio
 import os
 
 import facefusion.globals
-from facefusion import wording
+from facefusion import process_manager, wording
 from facefusion.face_store import clear_static_faces, clear_reference_faces
 from facefusion.uis.typing import File
 from facefusion.filesystem import get_file_size, is_image, is_video
@@ -18,18 +19,26 @@ TARGET_VIDEO_TABLE : Optional[gradio.Dataframe] = None
 
 def render() -> None:
 	global TARGET_LOAD
+	global TARGET_CLEAR
 	global TARGET_DIRECTORY
 	global TARGET_VIDEO_TABLE
  
 	with gradio.Row():
-		TARGET_DIRECTORY = gradio.Textbox(label="输入目录路径", placeholder="请输入视频文件目录路径")
-		TARGET_LOAD = gradio.Button("加载视频文件", variant = 'primary',)
+		with gradio.Column(scale=4):
+			TARGET_DIRECTORY = gradio.Textbox(label="TARGET DIRECTORY", placeholder="Enter the target directory path")
+		# with gradio.Column():
+		# with gradio.Row():
+		TARGET_LOAD = gradio.Button("Load 💾", variant = 'primary')
+		TARGET_CLEAR = gradio.Button("Clear")
+    
+		# with gradio.Column():
 
-	TARGET_VIDEO_TABLE = gradio.Dataframe(headers=["视频文件"], datatype="str", interactive=False)
+	TARGET_VIDEO_TABLE = gradio.Dataframe(headers=["Video Files"], datatype="str", interactive=False)
 
 
 def listen() -> None:
 	TARGET_LOAD.click(fn=load_videos, inputs=TARGET_DIRECTORY, outputs=TARGET_VIDEO_TABLE)
+	TARGET_CLEAR.click(fn=clear, outputs=[TARGET_DIRECTORY, TARGET_VIDEO_TABLE])
 
 def load_videos(directory):
 	clear_reference_faces()
@@ -41,3 +50,7 @@ def load_videos(directory):
 
 	return [[video] for video in videos]  # 返回列表，用于在表格中显示
  
+def clear() -> gradio.Dataframe:
+	while process_manager.is_processing():
+		sleep(0.5)
+	return gradio.Textbox(value=None), gradio.Dataframe(value=None, interactive=False)

@@ -16,7 +16,6 @@ from facefusion.uis.core import get_ui_component
 
 import glob
 import os
-directory = '/work/facefusion/data/2024-09-11'
 
 def get_mp4_files_glob(directory):
     pattern = os.path.join(directory, '**', '*.mp4')
@@ -45,7 +44,7 @@ def render() -> None:
 	global BENCHMARK_CLEAR_BUTTON
 
 	BENCHMARK_RESULTS_DATAFRAME = gradio.Dataframe(
-		label = wording.get('uis.benchmark_results_dataframe'),
+		label = wording.get('uis.batch_process_results'),
 		headers =
 		[
 			'target_path',
@@ -134,6 +133,6 @@ def benchmark() -> List[Any]:
 def clear() -> gradio.Dataframe:
 	while process_manager.is_processing():
 		sleep(0.5)
-	if facefusion.globals.target_path:
-		clear_temp(facefusion.globals.target_path)
+	if facefusion.globals.target_paths:
+		clear_temp(facefusion.globals.target_paths)
 	return gradio.Dataframe(value = None)
